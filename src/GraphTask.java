@@ -15,6 +15,7 @@ public class GraphTask {
    public void run() {
       Graph g1 = new Graph ("G");
       g1.createRandomSimpleGraph (6, 9);
+      Graph d1 = g1;
       Graph b1 = g1.clone();
       Graph g2 = new Graph("L");
       g2.createRandomSimpleGraph(2000, 4000);
@@ -30,10 +31,16 @@ public class GraphTask {
       Graph b5 = g5.clone();
       System.out.println("For debugging purposes");
       if (!g1.toString().equals(b1.toString())) throw new AssertionError("Should be equal");
+      if (g1 != d1) throw new AssertionError("Shallow copy should be not original");
+      if (g1 == b1) throw new AssertionError("Deep clone should be original");
       if (!g2.toString().equals(b2.toString())) throw new AssertionError("Should be equal");
+      if (g2 == b2) throw new AssertionError("Deep clone should be original");
       if (!g3.toString().equals(b3.toString())) throw new AssertionError("Should be equal");
+      if (g3 == b3) throw new AssertionError("Deep clone should be original");
       if (!g4.toString().equals(b4.toString())) throw new AssertionError("Should be equal");
+      if (g4 == b4) throw new AssertionError("Deep clone should be original");
       if (!g5.toString().equals(b5.toString())) throw new AssertionError("Should be equal");
+      if (g5 == b5) throw new AssertionError("Deep clone should be original");
       if (g1.toString().equals(b3.toString())) throw new AssertionError("Should be not equal");
       b2.createRandomSimpleGraph(10, 30);
       if (g2.toString().equals(b2.toString())) throw new AssertionError("Should be not equal");
