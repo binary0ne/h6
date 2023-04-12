@@ -9,19 +9,38 @@ public class GraphTask {
    public static void main (String[] args) {
       GraphTask a = new GraphTask();
       a.run();
-      throw new RuntimeException ("Nothing implemented yet!"); // delete this
    }
 
    /** Actual main method to run examples and everything. */
    public void run() {
-      Graph g = new Graph ("G");
-      g.createRandomSimpleGraph (6, 9);
-      System.out.println (g);
-
-      // TODO!!! Your experiments here
+      Graph g1 = new Graph ("G");
+      g1.createRandomSimpleGraph (6, 9);
+      Graph b1 = g1.clone();
+      Graph g2 = new Graph("L");
+      g2.createRandomSimpleGraph(2000, 4000);
+      Graph b2 = g2.clone();
+      Graph g3 = new Graph("L");
+      g3.createRandomSimpleGraph(100, 300);
+      Graph b3 = g3.clone();
+      Graph g4 = new Graph("L");
+      g4.createRandomSimpleGraph(345, 360);
+      Graph b4 = g4.clone();
+      Graph g5 = new Graph("L");
+      g5.createRandomSimpleGraph(232, 231);
+      Graph b5 = g5.clone();
+      System.out.println("For debugging purposes");
+      if (!g1.toString().equals(b1.toString())) throw new AssertionError("Should be equal");
+      if (!g2.toString().equals(b2.toString())) throw new AssertionError("Should be equal");
+      if (!g3.toString().equals(b3.toString())) throw new AssertionError("Should be equal");
+      if (!g4.toString().equals(b4.toString())) throw new AssertionError("Should be equal");
+      if (!g5.toString().equals(b5.toString())) throw new AssertionError("Should be equal");
+      if (g1.toString().equals(b3.toString())) throw new AssertionError("Should be not equal");
+      b2.createRandomSimpleGraph(10, 30);
+      if (g2.toString().equals(b2.toString())) throw new AssertionError("Should be not equal");
+      g4.createRandomSimpleGraph(34, 39);
+      if (g4.toString().equals(b4.toString())) throw new AssertionError("Should be not equal");
    }
 
-   // TODO!!! add javadoc relevant to your problem
    class Vertex {
 
       private String id;
@@ -45,7 +64,19 @@ public class GraphTask {
          return id;
       }
 
-      // TODO!!! Your Vertex methods here!
+      /** Deep clone of vertices.
+       * Side effect: looses all arcs, to keep arcs use clone method from Graph object.
+       * @return deep cloned vertices
+       */
+      @Override
+      public Vertex clone() {
+         Vertex clonedVertex = new Vertex(this.id, null, null);
+         clonedVertex.info = this.info;
+         if (this.next != null) {
+            clonedVertex.next = this.next.clone();
+         }
+         return clonedVertex;
+      }
    }
 
 
@@ -75,7 +106,20 @@ public class GraphTask {
          return id;
       }
 
-      // TODO!!! Your Arc methods here!
+      /** Deep clone of arcs.
+       * @param vertexList the list of new vertices in order as they follow in graph
+       *                   to map arc targets to new cloned vertices.
+       * @return deep cloned arcs with targets correlated with vertexList
+       */
+      public Arc clone(List<Vertex> vertexList) {
+         Arc clonedArc = new Arc(this.id, null, null);
+         clonedArc.info = this.info;
+         clonedArc.target = vertexList.get(this.target.info);
+         if (this.next != null) {
+            clonedArc.next = this.next.clone(vertexList);
+         }
+         return clonedArc;
+      }
    } 
 
 
@@ -227,8 +271,35 @@ public class GraphTask {
          }
       }
 
-      // TODO!!! Your Graph methods here! Probably your solution belongs here.
+      /**
+       * Creates deep clone of this graph.
+       * Firstly, creates new graph object and copies parameters of this to new.
+       * Secondly, using vertices clone method clones vertices.
+       * Thirdly, creates list of vertices for simplification of next operations.
+       * Fourthly, for each vertex of this creates clones of arcs with providing list of new vertices to map
+       * arcs targets to new cloned vertices.
+       * All cloning are working on recursive logic.
+       * @return deep cloned graph identical by content to this
+       */
+      @Override
+      public Graph clone() {
+         Graph clonedGraph = new Graph(this.id, this.first.clone());
+         clonedGraph.info = this.info;
+         List<Vertex> vertexList = new ArrayList<>();
+         Vertex currentVertex = clonedGraph.first;
+         while (currentVertex != null) {
+            vertexList.add(currentVertex);
+            currentVertex = currentVertex.next;
+         }
+         Vertex baseVertex = this.first;
+         int i = 0;
+         while (baseVertex != null) {
+            vertexList.get(i).first = baseVertex.first.clone(vertexList);
+            baseVertex = baseVertex.next;
+            i++;
+         }
+         return clonedGraph;
+      }
    }
-
 } 
 
