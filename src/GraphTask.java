@@ -46,6 +46,42 @@ public class GraphTask {
       if (g2.toString().equals(b2.toString())) throw new AssertionError("Should be not equal");
       g4.createRandomSimpleGraph(34, 39);
       if (g4.toString().equals(b4.toString())) throw new AssertionError("Should be not equal");
+      Graph deepTestO = new Graph ("G");
+      deepTestO.createRandomSimpleGraph (6, 12);
+      Graph deepTestC = deepTestO.clone();
+      if (!deepTestC.id.equals(deepTestO.id)) throw new AssertionError("Should be equal");
+      if (deepTestC.info != deepTestO.info) throw new AssertionError("Should be equal");
+      if (deepTestC == deepTestO) throw new AssertionError("Deep clone should be original");
+      Vertex dtof = deepTestO.first;
+      Vertex dtcf = deepTestC.first;
+      while (dtof != null) {
+         System.out.println("Vertex clone id: " + dtcf.id + " Vertex original id: " + dtof.id);
+         System.out.println("Are vertices the same? " + (dtcf == dtof));
+         if (!dtof.id.equals(dtcf.id)) throw new AssertionError("Vertices id should be equal");
+         if (dtof.info != dtcf.info) throw new AssertionError("Vertices info should be equal");
+         if (dtof == dtcf) throw new AssertionError("Deep clone of vertex should be original");
+         if (dtof.first != null) {
+            Arc dtoa = dtof.first;
+            Arc dtca = dtcf.first;
+            while (dtoa != null) {
+               if (dtoa == dtca) throw new AssertionError("Deep clone of arc should be original");
+               if (dtoa.target == dtca.target) throw new AssertionError("Deep clone of arc targets" +
+                       " should be original");
+               if (!dtoa.id.equals(dtca.id)) throw new AssertionError("Arcs id should be equal");
+               if (dtoa.info != dtca.info) throw new AssertionError("Arcs info should be equal");
+               if (dtoa.target.id != dtca.target.id) throw new AssertionError("Arc targets" +
+                       " id should be equal");
+               System.out.println("Arc clone id: " + dtca.id + " Arc original id: " + dtoa.id);
+               System.out.println("Are arcs the same? " + (dtca == dtoa));
+               System.out.println("Arc clone target id: " + dtca.target.id + " Arc original target id: " + dtoa.target.id);
+               System.out.println("Are arcs targets the same? " + (dtca.target == dtoa.target));
+               dtoa = dtoa.next;
+               dtca = dtca.next;
+            }
+         }
+         dtof = dtof.next;
+         dtcf = dtcf.next;
+      }
    }
 
    class Vertex {
